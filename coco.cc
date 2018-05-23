@@ -27,17 +27,23 @@ void pagerank(NEGraph &graph, vid_t vnum, float alpha) {
   std::function<void(vid_t, vid_t)> func2 =
       std::bind(fc2, src, dst, std::placeholders::_1, std::placeholders::_2);
 
+  printf("Before calculating degree\n");
   graph.MapEdges(func1);
+  printf("After calculating degree\n");
 
   int iter = 20;
   while (iter--) {
     printf("Iteration - %d", 20 - iter);
     for (vid_t i = 0; i < vnum; i++) {
       src[i] = alpha * dst[i] / deg[i];
-      dst[i] = 1f - alpha;
+      dst[i] = 1.0f - alpha;
     }
     graph.MapEdges(func2);
   }
+
+  free(src);
+  free(dst);
+  free(deg);
 }
 
 void f3(vid_t &max_x, vid_t &max_y, size_t &edges, vid_t x, vid_t y) {
@@ -65,6 +71,8 @@ vid_t stats(NEGraph &graph) {
   printf("max x: %u\n", max_x);
   printf("max y: %u\n", max_y);
   printf("edges: %zu\n", edges);
+
+  return max_x > max_y ? (max_x + 1) : (max_y + 1);
 }
 
 int main(int argc, char **argv) {
@@ -79,6 +87,8 @@ int main(int argc, char **argv) {
   std::string vfile = prefix + ".nodes";
 
   NEGraph graph(vfile.c_str(), efile.c_str());
+
+  printf("graph loaded...\n");
 
   if (algo_name == "pagerank") {
     pagerank(graph, stats(graph), 0.8f);

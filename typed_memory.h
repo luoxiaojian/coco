@@ -11,6 +11,7 @@
 #include <sys/stat.h>
 #include <sys/unistd.h>
 #include <unistd.h>
+#include <string.h>
 
 template <typename T>
 class TypedMemory {
@@ -27,13 +28,15 @@ class TypedMemory {
       Close();
     }
     if (!CheckPath(path)) {
+      printf("failed check path\n");
       return false;
     }
     int fd = open(path_, O_RDONLY);
     if (fd == -1) {
+      printf("failed open file\n");
       return false;
     }
-    stat st;
+    struct stat st;
     fstat(fd, &st);
     size_in_byte_ = st.st_size;
     size_ = size_in_byte_ / sizeof(T);
@@ -43,6 +46,7 @@ class TypedMemory {
         mmap(NULL, size_in_byte_, PROT_READ, MAP_PRIVATE, fd, 0));
     inited_ = true;
     close(fd);
+    return true;
   }
 
   void Create(const char* path, size_t size) {
@@ -71,6 +75,7 @@ class TypedMemory {
         mmap(NULL, size_in_byte_, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0));
     close(fd);
     inited_ = true;
+    return true;
   }
 
   void Close() {
@@ -87,7 +92,7 @@ class TypedMemory {
 
  private:
   bool CheckPath(const char* path) {
-    if (stelen(path) > sizeof(path_) - 1) {
+    if (strlen(path) > sizeof(path_) - 1) {
       return false;
     } else {
       strncpy(&path_[0], path, sizeof(path_) - 1);

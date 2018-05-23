@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include <string>
+#include <limits>
 
 #include "graph.h"
 
@@ -25,6 +26,7 @@ int main(int argc, char **argv) {
       if (count > 0) {
         fwrite(&cur_src, sizeof(vid_t), 1, foutv);
         fwrite(&count, sizeof(unsigned), 1, foutv);
+        count = 0;
       }
       cur_src = src;
     }
@@ -34,6 +36,7 @@ int main(int argc, char **argv) {
 
   if (count > 0) {
     fwrite(&cur_src, sizeof(vid_t), 1, foutv);
+    fwrite(&count, sizeof(unsigned), 1, foutv);
   }
 
   fflush(foutv);
