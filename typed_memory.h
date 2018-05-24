@@ -90,6 +90,16 @@ class TypedMemory {
 
   inline T& operator[](size_t loc) { return buffer_[loc]; }
 
+  void Traverse() {
+    uint64_t sum = 0;
+    size_t len = size_in_byte_ / sizeof(uint64_t);
+    uint64_t *ptr = reinterpret_cast<uint64_t*>(buffer_);
+    for(size_t i = 0; i < len; i++) {
+      sum += ptr[i];
+    }
+    printf("-- %lu\n", sum);
+  }
+
  private:
   bool CheckPath(const char* path) {
     if (strlen(path) > sizeof(path_) - 1) {
